@@ -1,8 +1,23 @@
 language: dart
+
 dart:
-  - stable
-script:
-  - pub get --packages-dir
-  - pub run test
-  - pub run dart_codecov_generator --report-on=bin/ --no-html --verbose test/env_test.dart
-  - bash <(curl -s https://codecov.io/bash)
+  - dev
+
+dart_task:
+  - test: -p vm,firefox
+  - dartfmt
+  - dartanalyzer: --fatal-warnings --fatal-hints .
+
+matrix:
+  include:
+    - dart: 2.2.0
+      dart_task:
+        dartanalyzer: --fatal-warnings --fatal-hints .
+
+# Only building master means that we don't run two builds for each pull request.
+branches:
+  only: [master]
+
+cache:
+  directories:
+    - $HOME/.pub-cache
